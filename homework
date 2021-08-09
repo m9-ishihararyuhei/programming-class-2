@@ -1,0 +1,151 @@
+#include<iostream>
+#include<string>
+#include<fstream>
+#include<vector>
+#include<algorithm>
+
+using namespace std;
+
+//�Ȗ��A�ԍ�(�����傫���قǖ���߂̋�)
+class Spitz {
+public:
+	Spitz() {}
+	void songname(string title) { _title = title; }
+	void number(int num) { _num = num; }
+	//void show() { cout << "�Ȗ�:" << _title << "\t�Ȃ̖��邳:" << _num << endl; }
+	int _num = 0;
+	string _title;
+};
+
+//�������ߓx�𐔒l��(�����������قǂ������߂̋�)
+class reco_Spitz :public Spitz {
+public:
+	void recomemend(int reco) { _reco = reco; }
+	void show() { cout << "�Ȗ�:" << _title << "\t�Ȃ̖��邳" << _num << "\t�������ߓx" << _reco << endl; }
+	int _reco = 0;
+};
+
+vector<reco_Spitz> spitz;
+int NUMBER;
+int RECOMMEND;
+
+//��O�𓊂���֐�
+void wrongNUM(int NUMBER ) {
+	if (NUMBER < 5 || NUMBER >(int)spitz.size() - 5) {
+		throw runtime_error("NUMBER�ɂ�5����S�Ȑ�-5�̊Ԃ̐�����͂��Ă�������");
+	}
+}
+//��O�𓊂���֐�
+void wrongRECO(int RECOMMEND){
+	if (RECOMMEND < 5 || RECOMMEND >(int)spitz.size() - 5) {
+		throw runtime_error("RECOMMEND�ɂ�5����S�Ȑ�-5�̊Ԃ̐�����͂��Ă�������");
+	}
+}
+
+int main(){
+	string type;
+	cout << "rock,good,relax�̒�����type��I��ł��������B";
+	cin >> type; //�^�C�v�I��(rock,good,relax�̂����ꂩ�����)
+	if (type == "rock") {
+		ifstream infile("rock.txt");
+		cout << "�Ȑ�:96\n";
+
+		string title;
+		int num, reco;
+		while (infile >> title >> num >> reco) {
+			spitz.emplace_back();
+			spitz[spitz.size() - 1].songname(title);
+			spitz[spitz.size() - 1].number(num);
+			spitz[spitz.size() - 1].recomemend(reco);
+		}
+		infile.close();
+	}
+
+	else if (type == "good") {
+		ifstream infile("good.txt");
+		cout << "�Ȑ�:108\n";
+
+		string title;
+		int num, reco;
+		while (infile >> title >> num >> reco) {
+			spitz.emplace_back();
+			spitz[spitz.size() - 1].songname(title);
+			spitz[spitz.size() - 1].number(num);
+			spitz[spitz.size() - 1].recomemend(reco);
+		}
+		infile.close();
+	}
+
+	else if (type == "relax") {
+		ifstream infile("relax.txt");
+		cout << "�Ȑ�:43\n";
+
+		string title;
+		int num, reco;
+		while (infile >> title >> num >> reco) {
+			spitz.emplace_back();
+			spitz[spitz.size() - 1].songname(title);
+			spitz[spitz.size() - 1].number(num);
+			spitz[spitz.size() - 1].recomemend(reco);
+		}
+		infile.close();
+	}
+
+	else {
+		cout << "�Y���Ȃ��ł��B��蒼���Ă��������B" << endl;
+		return 0;
+	}
+
+	string str;
+	cout << "num,reco�̂����ꂩ��I�����Ă�������(num���Ȃ̖��邳�Areco���������ߓx)�B";
+	cin >> str; //�Ȃ̖��邳���������ߓx�̑I��(num,reco�̂ǂ��炩�����)
+	if (str == "num") {
+		sort(spitz.begin(), spitz.end(), [](const reco_Spitz& x, const reco_Spitz& y) {
+			return x._num < y._num;
+			});
+
+		cout << "5����Ȑ�-5�܂ł̐�����͂��Ă��������B�傫�����قǖ��邢�Ȃł��B";
+		cin >> NUMBER; //5����Ȑ�-5�܂ł̐������
+
+		try {
+			wrongNUM( NUMBER );
+		}
+		catch (exception& e) {
+			cerr << e.what() << endl;
+			return 0;
+		}
+
+		cout << "\n" << "�X�s�b�c�̖��邢�ȏ��v���C���X�g\n";
+		for (int i = (NUMBER-5);i < (NUMBER+5);i++) {
+			spitz[i].show();
+		}
+	}
+
+	else if (str == "reco") {
+		sort(spitz.begin(), spitz.end(), [](const reco_Spitz& x, const reco_Spitz& y) {
+			return x._reco < y._reco;
+			});
+
+		cout << "5����Ȑ�-4�܂ł̐�����͂��Ă��������B���������قǂ������߂̋Ȃł��B";
+		cin >> RECOMMEND; //5����Ȑ�-5�܂ł̐������
+
+		try {
+			wrongRECO( RECOMMEND );
+		}
+		catch (exception& e) {
+			cerr << e.what() << endl;
+			return 0;
+		}
+
+		cout << "\n" << "�X�s�b�c�̂������ߋȏ��v���C���X�g\n";
+		for (int i = (RECOMMEND-5);i < (RECOMMEND+5);i++) {
+			spitz[i].show();
+		}
+	}
+
+	else {
+		cout << "�Y���Ȃ��ł��B��蒼���Ă��������B" << endl;
+	}
+
+	return 0;
+}
